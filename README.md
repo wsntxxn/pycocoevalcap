@@ -1,10 +1,10 @@
 Microsoft COCO Caption Evaluation
 ===================
 
-Evaluation codes for MS COCO caption generation.
+Evaluation codes for caption generation (originated from MS COCO), metrics include Bleu, Meteor, Rouge-L, CIDEr and SPICE.
 
 ## Description ##
-This repository provides Python 3 support for the caption evaluation metrics used for the MS COCO dataset.
+This repository provides Python 3 support for the caption evaluation metrics (originated from MS COCO dataset).
 
 The code is derived from the original repository that supports Python 2.7: https://github.com/tylin/coco-caption.  
 Caption evaluation depends on the COCO API that natively supports Python 3 (see Requirements).
@@ -14,7 +14,6 @@ The repository is modified to support Chinese evaluation, for BLEU, Rouge-L and 
 ## Requirements ##
 - Java 1.8.0
 - Python 3
-- pycocotools (COCO Python API): https://github.com/cocodataset/cocoapi
 
 ## Installation ##
 To install pycocoevalcap and the pycocotools dependency, run:
@@ -23,9 +22,6 @@ pip install git+https://github.com/wsntxxn/pycocoevalcap
 ```
 
 ## Files ##
-./
-- eval.py: The file includes COCOEavlCap class that can be used to evaluate results on COCO.
-- tokenizer: Python wrapper of Stanford CoreNLP PTBTokenizer
 - bleu: Bleu evalutation codes
 - meteor: Meteor evaluation codes
 - rouge: Rouge-L evaluation codes
