@@ -2,13 +2,19 @@
 # Tsung-Yi Lin <tl483@cornell.edu>
 # Ramakrishna Vedantam <vrama91@vt.edu>
 
+# =================================================================
+# This code was pulled from https://github.com/tylin/coco-caption
+# and refactored for Python 3.
+# Image-specific names and comments have also been changed to be audio-specific
+# =================================================================
+
 import copy
 from collections import defaultdict
 import numpy as np
 import pdb
 import math
 
-def precook(s, n=4, out=False):
+def precook(s, n=4, out=False, zh=False):
     """
     Takes a string as input and returns an object that can be given to
     either cook_refs or cook_test. This is optional: cook_refs and cook_test
@@ -17,7 +23,10 @@ def precook(s, n=4, out=False):
     :param n: int    : number of ngrams for which representation is calculated
     :return: term frequency vector for occuring ngrams
     """
-    words = s.split()
+    if zh:
+        words = s
+    else:
+        words = s.split()
     counts = defaultdict(int)
     for k in range(1,n+1):
         for i in range(len(words)-k+1):
@@ -25,24 +34,24 @@ def precook(s, n=4, out=False):
             counts[ngram] += 1
     return counts
 
-def cook_refs(refs, n=4): ## lhuang: oracle will call with "average"
+def cook_refs(refs, n=4, zh=False): ## lhuang: oracle will call with "average"
     '''Takes a list of reference sentences for a single segment
     and returns an object that encapsulates everything that BLEU
     needs to know about them.
-    :param refs: list of string : reference sentences for some image
+    :param refs: list of string : reference sentences for some audio
     :param n: int : number of ngrams for which (ngram) representation is calculated
     :return: result (list of dict)
     '''
-    return [precook(ref, n) for ref in refs]
+    return [precook(ref, n, zh=zh) for ref in refs]
 
-def cook_test(test, n=4):
+def cook_test(test, n=4, zh=False):
     '''Takes a test sentence and returns an object that
     encapsulates everything that BLEU needs to know about it.
-    :param test: list of string : hypothesis sentence for some image
+    :param test: list of string : hypothesis sentence for some audio
     :param n: int : number of ngrams for which (ngram) representation is calculated
     :return: result (dict)
     '''
-    return precook(test, n, True)
+    return precook(test, n, True, zh)
 
 class CiderScorer(object):
     """CIDEr scorer.
@@ -50,14 +59,15 @@ class CiderScorer(object):
 
     def copy(self):
         ''' copy the refs.'''
-        new = CiderScorer(n=self.n)
+        new = CiderScorer(n=self.n, zh=self.zh)
         new.ctest = copy.copy(self.ctest)
         new.crefs = copy.copy(self.crefs)
         return new
 
-    def __init__(self, test=None, refs=None, n=4, sigma=6.0):
+    def __init__(self, test=None, refs=None, n=4, sigma=6.0, zh=False):
         ''' singular instance '''
         self.n = n
+        self.zh = zh
         self.sigma = sigma
         self.crefs = []
         self.ctest = []
@@ -69,9 +79,9 @@ class CiderScorer(object):
         '''called by constructor and __iadd__ to avoid creating new instances.'''
 
         if refs is not None:
-            self.crefs.append(cook_refs(refs))
+            self.crefs.append(cook_refs(refs, zh=self.zh))
             if test is not None:
-                self.ctest.append(cook_test(test)) ## N.B.: -1
+                self.ctest.append(cook_test(test, zh=self.zh)) ## N.B.: -1
             else:
                 self.ctest.append(None) # lens of crefs and ctest have to match
 
@@ -98,7 +108,7 @@ class CiderScorer(object):
         :return: None
         '''
         for refs in self.crefs:
-            # refs, k ref captions of one image
+            # refs, k ref captions of one audio
             for ngram in set([ngram for ref in refs for (ngram,count) in ref.items()]):
                 self.document_frequency[ngram] += 1
             # maxcounts[ngram] = max(maxcounts.get(ngram,0), count)
@@ -176,7 +186,7 @@ class CiderScorer(object):
             score_avg /= len(refs)
             # multiply score by 10
             score_avg *= 10.0
-            # append score of an image to the score list
+            # append score of an audio to the score list
             scores.append(score_avg)
         return scores
 

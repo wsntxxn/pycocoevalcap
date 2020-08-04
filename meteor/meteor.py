@@ -3,6 +3,11 @@
 # Python wrapper for METEOR implementation, by Xinlei Chen
 # Acknowledge Michael Denkowski for the generous discussion and help
 
+# =================================================================
+# This code was pulled from https://github.com/tylin/coco-caption
+# and refactored for Python 3.
+# =================================================================
+
 import os
 import sys
 import subprocess

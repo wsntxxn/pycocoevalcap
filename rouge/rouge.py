@@ -1,11 +1,16 @@
 #!/usr/bin/env python
-#
+# 
 # File Name : rouge.py
 #
 # Description : Computes ROUGE-L metric as described by Lin and Hovey (2004)
 #
 # Creation Date : 2015-01-07 06:03
 # Author : Ramakrishna Vedantam <vrama91@vt.edu>
+
+# =================================================================
+# This code was pulled from https://github.com/tylin/coco-caption
+# Image-specific names and comments have been changed to be audio-specific
+# =================================================================
 
 import numpy as np
 import pdb
@@ -38,28 +43,35 @@ class Rouge():
     Class for computing ROUGE-L score for a set of candidate sentences for the MS COCO test set
 
     '''
-    def __init__(self):
+    def __init__(self, zh=False):
         # vrama91: updated the value below based on discussion with Hovey
         self.beta = 1.2
+        self.zh = zh
 
     def calc_score(self, candidate, refs):
         """
-        Compute ROUGE-L score given one candidate and references for an image
+        Compute ROUGE-L score given one candidate and references for an audio
         :param candidate: str : candidate sentence to be evaluated
-        :param refs: list of str : COCO reference sentences for the particular image to be evaluated
+        :param refs: list of str : COCO reference sentences for the particular audio to be evaluated
         :returns score: int (ROUGE-L score for the candidate evaluated against references)
         """
-        assert(len(candidate)==1)
-        assert(len(refs)>0)
+        assert(len(candidate)==1)	
+        assert(len(refs)>0)         
         prec = []
         rec = []
 
         # split into tokens
-        token_c = candidate[0].split(" ")
-
+        if self.zh:
+            token_c = candidate[0]
+        else:
+            token_c = candidate[0].split(" ")
+    	
         for reference in refs:
             # split into tokens
-            token_r = reference.split(" ")
+            if self.zh:
+                token_r = reference
+            else:
+                token_r = reference.split(" ")
             # compute the longest common subsequence
             lcs = my_lcs(token_r, token_c)
             prec.append(lcs/float(len(token_c)))
@@ -77,16 +89,16 @@ class Rouge():
     def compute_score(self, gts, res):
         """
         Computes Rouge-L score given a set of reference and candidate sentences for the dataset
-        Invoked by evaluate_captions.py
-        :param hypo_for_image: dict : candidate / test sentences with "image name" key and "tokenized sentences" as values
-        :param ref_for_image: dict : reference MS-COCO sentences with "image name" key and "tokenized sentences" as values
-        :returns: average_score: float (mean ROUGE-L score computed by averaging scores for all the images)
+        Invoked by evaluate_captions.py 
+        :param hypo_for_audio: dict : candidate / test sentences with "audio name" key and "tokenized sentences" as values
+        :param ref_for_audio: dict : reference captions with "audio name" key and "tokenized sentences" as values
+        :returns: average_score: float (mean ROUGE-L score computed by averaging scores for all the audio files)
         """
         assert(gts.keys() == res.keys())
-        imgIds = gts.keys()
+        audioIds = gts.keys()
 
         score = []
-        for id in imgIds:
+        for id in audioIds:
             hypo = res[id]
             ref  = gts[id]
 

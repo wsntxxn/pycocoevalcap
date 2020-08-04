@@ -9,6 +9,8 @@ This repository provides Python 3 support for the caption evaluation metrics use
 The code is derived from the original repository that supports Python 2.7: https://github.com/tylin/coco-caption.  
 Caption evaluation depends on the COCO API that natively supports Python 3 (see Requirements).
 
+The repository is modified to support Chinese evaluation, for BLEU, Rouge-L and CIDer
+
 ## Requirements ##
 - Java 1.8.0
 - Python 3
@@ -17,7 +19,7 @@ Caption evaluation depends on the COCO API that natively supports Python 3 (see 
 ## Installation ##
 To install pycocoevalcap and the pycocotools dependency, run:
 ```
-pip install git+https://github.com/salaniz/pycocoevalcap
+pip install git+https://github.com/wsntxxn/pycocoevalcap
 ```
 
 ## Files ##
@@ -50,6 +52,7 @@ pip install git+https://github.com/salaniz/pycocoevalcap
 - Hao Fang (University of Washington)
 - Tsung-Yi Lin (Cornell)
 - Ramakrishna Vedantam (Virgina Tech)
+- Xuenan Xu (Shanghai Jiao Tong University)
 
 ## Acknowledgement ##
 - David Chiang (University of Norte Dame)
